@@ -11,6 +11,7 @@ import 'admin/homeadmin.dart';
 import 'api/Model_coaching.dart';
 import 'api/Model_coaching2.dart';
 import 'api/RepositoryCoaching.dart';
+import 'api/classRestApi.dart';
 import 'daftarcoaching.dart';
 
 class PageHome extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PageHomeState extends State<PageHome> {
 
 
   List<DataCoaching> listCoaching = [];
+
   RepositoryGejala repository = RepositoryGejala();
   getDataGejala() async {
     listCoaching = await repository.getDataCoaching();
@@ -39,17 +41,17 @@ class _PageHomeState extends State<PageHome> {
     });
   }
 
-  Future<List> getDataa() async{
-    String Url = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/getListCoaching';
-    http.Response response = await http.get(Uri.parse(Url));
-    return json.decode(response.body);
+  // Future<List> getDataa() async{
+  //   String Url = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/getListCoaching';
+  //   http.Response response = await http.get(Uri.parse(Url));
+  //   return json.decode(response.body);
+  //
+  // }
 
-  }
-
-  void main() async{
-    List data = await getDataa();
-    print(data);
-  }
+  // void main() async{
+  //   List data = await getDataa();
+  //   print(data);
+  // }
 
 
   // List data = await getDataa();
@@ -106,19 +108,50 @@ class _PageHomeState extends State<PageHome> {
 
   }
 
+  // void _load() async {
+  //   List<DataCoaching> users =
+  //   await RestApi.getUsers(); // load the users on Widget init
+  //   setState(() => listCoaching = users);
+  // }
+
+
+  // List<DataCoaching> _list = [];
+  // var loading = false;
+  // Future<Null> _fetchData() async {
+  //   setState(() {
+  //     loading = true;
+  //   });
+  //   final response =
+  //   await http.get(Uri.parse("https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/getListCoaching"));
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //     setState(() {
+  //       // for (Map e in data) {
+  //       //   _list.add(DataCoaching.fromJson(e));
+  //       // }
+  //       // loading = false;
+  //       List<DataCoaching> dataGejala = data.map((e) => DataCoaching.fromJson(e)).toList();
+  //
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {
     getAkun();
     getDataGejala();
+    print("Batas Print........");
+    print("Isi Data Gejala : ${getDataGejala()}");
+    // _load();
     super.initState();
+    // _fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: const Text("Home"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -128,7 +161,7 @@ class _PageHomeState extends State<PageHome> {
             Center(
               child: Text(
                 'Selamat Datang, $username',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Ubuntu',
@@ -136,11 +169,11 @@ class _PageHomeState extends State<PageHome> {
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Row(
-                children: [
+                children: const [
                   Text(
                     'Silahkan pilih layanan coaching',
                     style: TextStyle(
@@ -162,9 +195,9 @@ class _PageHomeState extends State<PageHome> {
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: listCoaching.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemBuilder: (context, i) {
+                    final x = listCoaching[i];
                     return Container(
-
                       margin: EdgeInsets.only(bottom: 3),
                       child: Card(
                         child: Row(
@@ -203,7 +236,7 @@ class _PageHomeState extends State<PageHome> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Pelatihan ${listCoaching[index].nm_materi}',
+                                        'Pelatihan ${x.nmMateri}',
                                         style: TextStyle(
                                           fontSize: 17,
                                           fontFamily: 'Ubuntu',
@@ -213,16 +246,19 @@ class _PageHomeState extends State<PageHome> {
                                       // ListView.builder(
                                       //   itemCount: listCoaching[i].jadwal.length,
                                       //   itemBuilder: (BuildContext ctx, int j) {
-                                      //     return Text(listCoaching[i]
-                                      //         .jadwal[j]
-                                      //         .tempat); // display username as an example
+                                      //     return Column(
+                                      //       children: [
+                                      //
+                                      //       ],
+                                      //     ); // display username as an example
                                       //   },
                                       // ),
                                       SizedBox(height: 18),
                                       Row(
                                         children: [
                                           Text(
-                                            'Tanggal: ',
+                                            // 'Tanggal     : ',
+                                            'Tanggal     : ${x.jadwal.tanggal}',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontFamily: 'Ubuntu',
@@ -233,9 +269,10 @@ class _PageHomeState extends State<PageHome> {
                                       ),
                                       SizedBox(height: 1),
                                       Row(
-                                        children: [
+                                        children:  [
                                           Text(
-                                            'Pukul: ',
+                                            // 'Pukul         : ',
+                                            'Pukul         : ${x.jadwal.waktu}',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontFamily: 'Ubuntu',
@@ -246,9 +283,10 @@ class _PageHomeState extends State<PageHome> {
                                       ),
                                       SizedBox(height: 1),
                                       Row(
-                                        children: [
+                                        children:  [
                                           Text(
-                                            'Tempat: ',
+                                            // 'Tempat: ',
+                                            'Tempat     : ${x.jadwal.tempat}',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontFamily: 'Ubuntu',
@@ -259,9 +297,10 @@ class _PageHomeState extends State<PageHome> {
                                       ),
                                       SizedBox(height: 1),
                                       Row(
-                                        children: [
+                                        children:  [
                                           Text(
-                                            'Kuota: ',
+                                            // 'Kuota        : ',
+                                            'Kuota        : ${x.jadwal.jumlahPeserta}',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontFamily: 'Ubuntu',

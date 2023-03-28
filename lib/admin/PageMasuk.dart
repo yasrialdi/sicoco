@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sicoco/api/RepositoryCoaching.dart';
+import 'package:sicoco/api/model_coaching_masuk.dart';
 
 class PageMasuk extends StatefulWidget {
   const PageMasuk(TabController? tabcontroll, {Key? key}) : super(key: key);
@@ -8,6 +10,59 @@ class PageMasuk extends StatefulWidget {
 }
 
 class _PageMasukState extends State<PageMasuk> {
+
+  List<CoachingMasuk> listCoachingmasuk = [];
+
+  RepositoryGejala repository = RepositoryGejala();
+  getDataCoachingMasuk() async {
+    listCoachingmasuk = await repository.getDataCoachingMasuk();
+    setState(() {});
+  }
+
+  _showAlertDialogTerima(CoachingMasuk data ) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Continue"),
+      onPressed: () async {
+        await repository.prosesCoaching(
+            data.idRegistrasi.toString(),
+            "1",
+        );
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Cek Kembali"),
+      content: Text(
+          "Nama" ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    getDataCoachingMasuk();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +77,10 @@ class _PageMasukState extends State<PageMasuk> {
           child: ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (BuildContext context, index) {
-                return  Container(
+              itemCount: listCoachingmasuk.length,
+              itemBuilder: (BuildContext context, i) {
+                final x = listCoachingmasuk[i];
+                return  x.status == 0 ? Container(
                   margin: EdgeInsets.only(bottom: 3),
                   child: Card(
                     child: Row(
@@ -40,7 +96,7 @@ class _PageMasukState extends State<PageMasuk> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pelatihan E-Kinerja',
+                                    x.nmMateri,
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontFamily: 'Ubuntu',
@@ -51,7 +107,7 @@ class _PageMasukState extends State<PageMasuk> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Nama : ',
+                                        'Nama     : ${x.pendaftar.nama}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -64,7 +120,7 @@ class _PageMasukState extends State<PageMasuk> {
                                   Row(
                                     children: [
                                       Text(
-                                        'OPD : ',
+                                        'OPD        : ${x.pendaftar.opd}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -76,7 +132,7 @@ class _PageMasukState extends State<PageMasuk> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Tanggal : ',
+                                        'Tanggal  : ${x.jadwal.tanggal}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -88,7 +144,7 @@ class _PageMasukState extends State<PageMasuk> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Tempat : ',
+                                        'Tempat   : ${x.jadwal.tempat}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -100,7 +156,7 @@ class _PageMasukState extends State<PageMasuk> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Pukul : ',
+                                        'Pukul       : ${x.jadwal.waktu}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -114,8 +170,8 @@ class _PageMasukState extends State<PageMasuk> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       MaterialButton(
-                                        onPressed: () {
-                                          // _showDialogBooking(listHome[index]);
+                                        onPressed: () async {
+                                          _showAlertDialogTerima(listCoachingmasuk[i]);
                                         },
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -135,7 +191,10 @@ class _PageMasukState extends State<PageMasuk> {
                                       ),
                                       SizedBox(width: 10),
                                       MaterialButton(
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await repository.prosesCoaching(
+                                              x.idRegistrasi.toString(),
+                                              "2");
                                           // edit(listHome[index]);
                                         },
                                         shape: RoundedRectangleBorder(
@@ -163,7 +222,8 @@ class _PageMasukState extends State<PageMasuk> {
                           ),
                         ]),
                   ),
-                );
+                )
+                    : Text("");
               }),
         ),
       ),

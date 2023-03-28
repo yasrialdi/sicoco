@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sicoco/detailcoaching.dart';
 
+import 'api/Model_CoachingKu.dart';
+import 'api/RepositoryCoaching.dart';
+
 class PageDaftarCoaching extends StatefulWidget {
   const PageDaftarCoaching({Key? key}) : super(key: key);
 
@@ -9,6 +12,21 @@ class PageDaftarCoaching extends StatefulWidget {
 }
 
 class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
+
+  List<CoachingKu> listCoachingKu = [];
+
+  RepositoryGejala repository = RepositoryGejala();
+  getDataCoachingKu() async {
+    listCoachingKu = await repository.getDataCoachingKu();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getDataCoachingKu();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,8 +57,9 @@ class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
                 child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: 3,
-                    itemBuilder: (BuildContext context, index) {
+                    itemCount: listCoachingKu.length,
+                    itemBuilder: (BuildContext context, i) {
+                      final x = listCoachingKu[i];
                       return Container(
 
                         margin: EdgeInsets.only(bottom: 3),
@@ -60,7 +79,7 @@ class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Pelatihan E-Kinerja',
+                                          x.nmMateri,
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontFamily: 'Ubuntu',
@@ -71,7 +90,7 @@ class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Tanggal: ',
+                                              'Tanggal  : ${x.jadwal.tanggal}',
                                               style: TextStyle(
                                                 fontSize: 11,
                                                 fontFamily: 'Ubuntu',
@@ -84,7 +103,7 @@ class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Pukul: ',
+                                              'Pukul      f: ${x.jadwal.waktu}',
                                               style: TextStyle(
                                                 fontSize: 11,
                                                 fontFamily: 'Ubuntu',
@@ -97,20 +116,7 @@ class _PageDaftarCoachingState extends State<PageDaftarCoaching> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Tempat: ',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontFamily: 'Ubuntu',
-                                                color: Color(0xff928B8B),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 1),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Kuota: ',
+                                              'Tempat   : ${x.jadwal.tempat}',
                                               style: TextStyle(
                                                 fontSize: 11,
                                                 fontFamily: 'Ubuntu',

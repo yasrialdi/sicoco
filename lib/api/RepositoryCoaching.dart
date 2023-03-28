@@ -5,15 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:sicoco/api/Model_coaching.dart';
+import 'package:sicoco/api/model_coaching_masuk.dart';
 
+import 'Model_CoachingKu.dart';
 import 'Model_coaching2.dart';
 
 
 class RepositoryGejala {
   final baseUrl = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/getListCoaching';
+  final UrlCoachingKu = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/coachingku/243';
+  final UrlCoachingMasuk = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/admin/listCoachingMasuk';
   final baseUrll = 'http://192.168.172.187/proyekakhir/get_data_gejala.php';
   final UrlDeleteGejala = 'https://ibuhamil.hidra-lab.my.id/proyekakhir/delete_gejala.php';
-  final UrlUpdateGejala = 'https://ibuhamil.hidra-lab.my.id/proyekakhir/update_gejala.php';
+  final UrlUpdateProsesCoaching = 'https://dev-mykopay.payakumbuhkota.go.id/api/sicoco/admin/prosesCoaching';
   final UrlTambahGejala = 'https://ibuhamil.hidra-lab.my.id/proyekakhir/tambah_data_gejala.php';
 
   Future getDataCoaching() async {
@@ -25,6 +29,36 @@ class RepositoryGejala {
         Iterable it = jsonDecode(response.body);
         List<DataCoaching> dataCoaching = it.map((e) => DataCoaching.fromJson(e)).toList();
         return dataCoaching;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future getDataCoachingKu() async {
+    try {
+      final response = await http.get(Uri.parse(UrlCoachingKu));
+
+      if (response.statusCode == 200) {
+        // print(response.body);
+        Iterable it = jsonDecode(response.body);
+        List<CoachingKu> dataCoachingku = it.map((e) => CoachingKu.fromJson(e)).toList();
+        return dataCoachingku;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future getDataCoachingMasuk() async {
+    try {
+      final response = await http.get(Uri.parse(UrlCoachingMasuk));
+
+      if (response.statusCode == 200) {
+        // print(response.body);
+        Iterable it = jsonDecode(response.body);
+        List<CoachingMasuk> dataCoachingmasuk = it.map((e) => CoachingMasuk.fromJson(e)).toList();
+        return dataCoachingmasuk;
       }
     } catch (e) {
       print(e.toString());
@@ -60,21 +94,18 @@ class RepositoryGejala {
     return false;
   }
 
-  Future<bool> updateGejala(
-      String id ,String kode, String namagjl, String nilaicf, String deskripsi) async {
+  Future<bool> prosesCoaching (
+      String id ,String status) async {
     try {
       final response = await http
-          .post(Uri.parse(UrlUpdateGejala), body: {
-        "id_gejala": id,
-        "kode_gejala": kode,
-        "nama_gejala": namagjl,
-        "nilai_cf": nilaicf,
-        "deskripsi_gejala": deskripsi,
+          .post(Uri.parse(UrlUpdateProsesCoaching), body: {
+        "id_registrasi": id,
+        "status": status,
       });
 
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
-            msg: "Update Data Gejala Berhasil",
+            msg: "Update Proses Berhasil",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 3,
@@ -84,7 +115,7 @@ class RepositoryGejala {
         );
       } else {
         Fluttertoast.showToast(
-            msg: "Update Data Gejala Gagal",
+            msg: "Update Proses Gagal",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 3,

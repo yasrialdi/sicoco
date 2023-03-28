@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:sicoco/api/RepositoryCoaching.dart';
+import 'package:sicoco/api/model_coaching_masuk.dart';
 
 class PageDiproses extends StatefulWidget {
   const PageDiproses(TabController? tabcontroll, {Key? key}) : super(key: key);
@@ -8,6 +11,21 @@ class PageDiproses extends StatefulWidget {
 }
 
 class _PageDiprosesState extends State<PageDiproses> {
+
+  List<CoachingMasuk> listCoachingmasuk = [];
+
+  RepositoryGejala repository = RepositoryGejala();
+  getDataCoachingMasuk() async {
+    listCoachingmasuk = await repository.getDataCoachingMasuk();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getDataCoachingMasuk();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +40,10 @@ class _PageDiprosesState extends State<PageDiproses> {
           child: ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (BuildContext context, index) {
-                return  Container(
+              itemCount: listCoachingmasuk.length,
+              itemBuilder: (BuildContext context, i) {
+                final x = listCoachingmasuk[i];
+                return  x.status > 0 ? Container(
                   margin: EdgeInsets.only(bottom: 3),
                   child: Card(
                     child: Row(
@@ -40,7 +59,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pelatihan E-Kinerja',
+                                    x.nmMateri,
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontFamily: 'Ubuntu',
@@ -51,7 +70,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Nama : ',
+                                        'Nama     : ${x.pendaftar.nama}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -64,7 +83,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                   Row(
                                     children: [
                                       Text(
-                                        'OPD : ',
+                                        'OPD        : ${x.pendaftar.opd}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -76,7 +95,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Tanggal : ',
+                                        'Tanggal  : ${x.jadwal.tanggal}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -88,7 +107,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Tempat : ',
+                                        'Tempat   : ${x.jadwal.tempat}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -100,7 +119,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Pukul : ',
+                                        'Pukul       : ${x.jadwal.waktu}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontFamily: 'Ubuntu',
@@ -123,8 +142,15 @@ class _PageDiprosesState extends State<PageDiproses> {
                                         ),
                                         height: 15,
                                         minWidth: 30,
-                                        child: Text(
+                                        child: x.status == 1 ? Text(
                                           'Disetujui',
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Ubuntu',
+                                              color: Colors.white),
+                                        ) : Text(
+                                          'Ditolak',
                                           style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
@@ -142,7 +168,7 @@ class _PageDiprosesState extends State<PageDiproses> {
                           ),
                         ]),
                   ),
-                );
+                ) : Text("");
               }),
         ),
       ),
